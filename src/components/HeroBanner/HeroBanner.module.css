@@ -1,0 +1,398 @@
+.hero {
+  padding: 0;
+  background: #f2f2f2;
+}
+
+.container {
+  position: relative;
+  width: min(1280px, calc(100% - 32px));
+  margin: 0 auto;
+}
+
+.viewport {
+  position: relative;
+  height: 310px;
+  overflow: hidden;
+  border-radius: 0;
+  background: #ff003c;
+}
+
+.slide {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(420px, 44%);
+  align-items: center;
+  gap: 34px;
+  padding: 34px 72px 34px 44px;
+  opacity: 0;
+  transform: scale(1.012);
+  transition: opacity 420ms ease, transform 420ms ease;
+  pointer-events: none;
+}
+
+.slide.active {
+  opacity: 1;
+  transform: scale(1);
+  pointer-events: auto;
+}
+
+.copy {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  max-width: 560px;
+  color: #fff;
+}
+
+.kicker {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  text-transform: lowercase;
+}
+
+.kicker strong {
+  max-width: 330px;
+  color: #fff;
+  font-size: 48px;
+  font-weight: 900;
+  line-height: 0.88;
+  letter-spacing: -0.065em;
+}
+
+.kicker span {
+  max-width: 360px;
+  padding-bottom: 6px;
+  border-bottom: 2px solid rgb(255 255 255 / 0.86);
+  color: #fff;
+  font-size: 34px;
+  font-weight: 900;
+  line-height: 0.9;
+  letter-spacing: -0.055em;
+}
+
+.kicker small {
+  margin-top: 8px;
+  color: #fff;
+  font-size: 18px;
+  font-weight: 900;
+}
+
+.kicker small strong {
+  color: #ffd400;
+  font-weight: 900;
+}
+
+.offer {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  margin: 22px 0 18px;
+}
+
+.offer em {
+  display: block;
+  color: #fff;
+  font-size: 17px;
+  font-style: normal;
+  font-weight: 800;
+  line-height: 1.1;
+}
+
+.offer strong {
+  color: #fff;
+  font-size: 82px;
+  font-weight: 900;
+  line-height: 0.82;
+  letter-spacing: -0.075em;
+}
+
+.offer span {
+  max-width: 160px;
+  color: #fff;
+  font-size: 18px;
+  font-weight: 900;
+  line-height: 1.05;
+}
+
+.copy a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 30px;
+  border-radius: 0;
+  padding: 0 18px;
+  background: #fff;
+  color: #ff003c;
+  font-size: 14px;
+  font-weight: 900;
+  text-transform: lowercase;
+}
+
+.visual {
+  position: relative;
+  display: grid;
+  place-items: center;
+  min-height: 240px;
+}
+
+.visualPanel {
+  position: relative;
+  width: min(420px, 100%);
+  min-height: 230px;
+  border-radius: 36px;
+  background: #fff200;
+  box-shadow: 0 18px 38px rgb(0 0 0 / 0.16);
+}
+
+.tvFrame {
+  position: absolute;
+  right: 18px;
+  bottom: 20px;
+  width: min(310px, 62%);
+  min-height: 190px;
+  padding: 18px 18px 30px;
+  border: 18px solid #fff;
+  border-radius: 24px;
+  background: #fff;
+}
+
+.screen {
+  display: grid;
+  place-items: center;
+  min-height: 142px;
+  overflow: hidden;
+  border-radius: 8px;
+  background:
+    radial-gradient(circle at 72% 50%, rgb(255 255 255 / 0.9) 0 6%, transparent 7%),
+    conic-gradient(from 210deg, #ff0050, #00a3ff, #ffd400, #00a650, #ff0050);
+}
+
+.screenSize {
+  position: absolute;
+  right: 16px;
+  bottom: 10px;
+  color: #111;
+  font-size: 18px;
+  font-weight: 900;
+}
+
+.tvBase {
+  position: absolute;
+  left: 50%;
+  bottom: -26px;
+  width: 72px;
+  height: 18px;
+  border-radius: 0 0 12px 12px;
+  background: #333;
+  transform: translateX(-50%);
+}
+
+.productStack {
+  position: absolute;
+  left: 24px;
+  bottom: 34px;
+  display: flex;
+  align-items: flex-end;
+  gap: 6px;
+  transform: rotate(-6deg);
+}
+
+.productStack span,
+.productStack strong,
+.productStack small,
+.productStack b {
+  display: grid;
+  place-items: center;
+  border-radius: 8px;
+  color: #fff;
+  font-weight: 900;
+  box-shadow: 0 8px 18px rgb(0 0 0 / 0.12);
+}
+
+.productStack span {
+  width: 54px;
+  height: 76px;
+  background: #6f5cff;
+  font-size: 13px;
+  line-height: 1;
+}
+
+.productStack strong {
+  width: 62px;
+  height: 82px;
+  background: #7d1c24;
+  font-size: 12px;
+  text-transform: uppercase;
+}
+
+.productStack small {
+  width: 46px;
+  height: 84px;
+  background: #00a3ff;
+  font-size: 12px;
+}
+
+.productStack b {
+  width: 42px;
+  height: 54px;
+  background: #111;
+  font-size: 11px;
+}
+
+.arrow {
+  position: absolute;
+  top: 45%;
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border: 0;
+  border-radius: 50%;
+  background: rgb(255 255 255 / 0.72);
+  box-shadow: 0 6px 18px rgb(0 0 0 / 0.12);
+  color: #ff003c;
+  transform: translateY(-50%);
+  transition: background 160ms ease, transform 160ms ease;
+}
+
+.arrow:hover {
+  background: rgb(255 255 255 / 0.92);
+  transform: translateY(-50%) scale(1.06);
+}
+
+.prev {
+  left: 10px;
+}
+
+.next {
+  right: 10px;
+}
+
+.dots {
+  position: absolute;
+  left: 50%;
+  bottom: 18px;
+  display: flex;
+  gap: 7px;
+  transform: translateX(-50%);
+}
+
+.dots button {
+  width: 8px;
+  height: 8px;
+  border: 0;
+  border-radius: 999px;
+  background: rgb(255 255 255 / 0.55);
+  transition: width 160ms ease, background 160ms ease;
+}
+
+.dots .activeDot {
+  width: 24px;
+  background: #fff;
+}
+
+@media (max-width: 980px) {
+  .viewport {
+    height: 250px;
+  }
+
+  .slide {
+    grid-template-columns: 1fr;
+    align-content: center;
+    padding: 30px 22px;
+  }
+
+  .kicker strong {
+    font-size: 32px;
+  }
+
+  .kicker span {
+    font-size: 24px;
+  }
+
+  .kicker small {
+    font-size: 14px;
+  }
+
+  .offer {
+    margin: 10px 0 12px;
+  }
+
+  .offer strong {
+    font-size: 54px;
+  }
+
+  .offer span {
+    max-width: 130px;
+    font-size: 15px;
+  }
+
+  .visual {
+    display: none;
+  }
+
+  .arrow {
+    display: none;
+  }
+}
+
+@media (max-width: 560px) {
+  .container {
+    width: calc(100% - 24px);
+  }
+
+  .viewport {
+    height: 222px;
+    border-radius: 14px;
+  }
+
+  .slide {
+    padding: 22px 18px 20px;
+  }
+
+  .kicker strong {
+    font-size: 25px;
+    line-height: 0.92;
+  }
+
+  .kicker span {
+    font-size: 18px;
+    line-height: 0.95;
+  }
+
+  .kicker small {
+    margin-top: 6px;
+    font-size: 11px;
+  }
+
+  .offer {
+    margin: 10px 0 8px;
+  }
+
+  .offer em {
+    font-size: 12px;
+  }
+
+  .offer strong {
+    font-size: 40px;
+  }
+
+  .offer span {
+    max-width: 118px;
+    font-size: 11px;
+    line-height: 1.05;
+  }
+
+  .copy a {
+    min-height: 28px;
+    padding: 0 14px;
+    font-size: 12px;
+  }
+
+  .dots {
+    bottom: 10px;
+  }
+}

@@ -1,0 +1,355 @@
+.card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: 224px;
+  min-height: 342px;
+  overflow: hidden;
+  border: 0;
+  border-radius: 18px;
+  background: #fff;
+  box-shadow: 0 4px 14px rgb(0 0 0 / 0.07);
+  transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease;
+}
+
+.card:hover {
+  border-color: #ffd4dc;
+  transform: translateY(-4px);
+  box-shadow: 0 14px 28px rgb(0 0 0 / 0.09);
+}
+
+.imageLink {
+  position: relative;
+  display: grid;
+  place-items: center;
+  height: 184px;
+  padding: 18px 18px 10px;
+  background: #fff;
+}
+
+.imageLink img {
+  width: 140px;
+  max-width: 140px;
+  max-height: 132px;
+  height: auto;
+  object-fit: contain;
+  transition: transform 220ms ease;
+}
+
+.card:hover .imageLink img {
+  transform: scale(1.04);
+}
+
+.content {
+  position: relative;
+  display: flex;
+  flex: 0 0 auto;
+  flex-direction: column;
+  gap: 4px;
+  padding: 12px 14px 14px;
+}
+
+.name {
+  display: -webkit-box;
+  min-height: 36px;
+  overflow: hidden;
+  color: #212121;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 18px;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.name:hover {
+  color: #ff003c;
+}
+
+.rating {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: #777;
+  font-size: 12px;
+}
+
+.rating strong {
+  color: #333;
+}
+
+.oldPrice {
+  color: #999;
+  font-size: 12px;
+  text-decoration: line-through;
+}
+
+.price {
+  color: #ff003c;
+  font-size: 23px;
+  font-weight: 900;
+  line-height: 1;
+  letter-spacing: -0.04em;
+}
+
+.installments {
+  color: #666;
+  font-size: 12px;
+  line-height: 1.25;
+}
+
+.badge {
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  min-height: 24px;
+  border-radius: 999px;
+  padding: 0 8px;
+  background: #fff1f3;
+  color: #ff003c;
+  font-size: 12px;
+  font-weight: 800;
+  line-height: 1.25;
+}
+
+.shipping {
+  align-self: flex-start;
+  display: inline-flex;
+  min-height: 24px;
+  align-items: center;
+  border-radius: 999px;
+  padding: 0 8px;
+  background: #e6f7ec;
+  color: #0b7a3b;
+  font-size: 12px;
+  font-weight: 800;
+  line-height: 1.25;
+}
+
+.discount {
+  display: inline-flex;
+  align-self: flex-start;
+  align-items: center;
+  min-height: 18px;
+  padding: 0 6px;
+  border-radius: 999px;
+  background: #107c41;
+  color: #fff;
+  font-size: 10px;
+  font-weight: 900;
+  line-height: 1;
+}
+
+.pickupBadge {
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 24px;
+  padding: 0 10px;
+  border-radius: 999px;
+  background: #ffe1e7;
+  color: #ff003c;
+  font-size: 11px;
+  font-weight: 900;
+  line-height: 1.2;
+}
+
+.cartButton {
+  position: absolute;
+  right: 10px;
+  bottom: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border: 0;
+  border-radius: 50%;
+  background: #ff0054;
+  color: #fff;
+  z-index: 20;
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  transition: background 160ms ease, transform 160ms ease;
+}
+
+.card:hover .cartButton {
+  transform: scale(1.04);
+}
+
+.cartButton:hover {
+  background: #d90033;
+}
+
+.quantitySelector {
+  position: absolute;
+  right: 10px;
+  bottom: 10px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 44px;
+  border-radius: 999px;
+  padding: 4px 10px;
+  background: #fff;
+  color: #212121;
+  box-shadow: 0 8px 18px rgb(0 0 0 / 0.16);
+  z-index: 20;
+}
+
+.quantitySelector span {
+  min-width: 18px;
+  color: #212121;
+  font-size: 15px;
+  font-weight: 900;
+  line-height: 1;
+  text-align: center;
+}
+
+.quantityButton {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border: 0;
+  border-radius: 50%;
+  background: #f2f2f2;
+  color: #212121;
+  font-weight: 900;
+  transition: background 160ms ease, color 160ms ease;
+}
+
+.quantityButton:hover {
+  background: #ffe1e7;
+  color: #ff0054;
+}
+
+.mobileHorizontalCard {
+  width: 186px !important;
+  min-width: 186px !important;
+  max-width: 186px !important;
+  flex: 0 0 186px !important;
+  flex-shrink: 0 !important;
+  flex-grow: 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  min-height: 382px;
+  border: 1px solid rgb(0 0 0 / 0.06);
+  border-radius: 16px;
+  box-shadow: 0 3px 10px rgb(0 0 0 / 0.055);
+  scroll-snap-align: start;
+}
+
+@media (max-width: 560px) {
+  .card {
+    width: 178px;
+    min-height: 326px;
+    border-radius: 14px;
+  }
+
+  .mobileHorizontalCard {
+    width: 182px !important;
+    min-width: 182px !important;
+    max-width: 182px !important;
+    flex: 0 0 182px !important;
+    flex-shrink: 0 !important;
+    flex-grow: 0 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    min-height: 382px;
+    border-radius: 16px;
+  }
+
+  .imageLink {
+    height: 158px;
+    padding: 16px 14px 8px;
+  }
+
+  .mobileHorizontalCard .imageLink {
+    height: 168px;
+    padding: 12px 10px 16px;
+  }
+
+  .content {
+    padding: 12px 12px 12px;
+    gap: 5px;
+  }
+
+  .mobileHorizontalCard .content {
+    padding: 10px 10px 12px;
+    gap: 4px;
+  }
+
+  .name {
+    min-height: 34px;
+    font-size: 13px;
+    line-height: 17px;
+  }
+
+  .mobileHorizontalCard .name {
+    min-height: 32px;
+    font-size: 12px;
+    line-height: 16px;
+  }
+
+  .rating {
+    font-size: 11px;
+  }
+
+  .mobileHorizontalCard .rating {
+    gap: 2px;
+    font-size: 10px;
+  }
+
+  .oldPrice,
+  .installments {
+    font-size: 10px;
+    line-height: 1.15;
+  }
+
+  .mobileHorizontalCard .oldPrice,
+  .mobileHorizontalCard .installments {
+    font-size: 9px;
+    line-height: 1.1;
+  }
+
+  .mobileHorizontalCard .discount {
+    min-height: 16px;
+    padding: 0 5px;
+    font-size: 9px;
+  }
+
+  .price {
+    font-size: 20px;
+  }
+
+  .mobileHorizontalCard .price {
+    font-size: 19px;
+    line-height: 1;
+  }
+
+  .pickupBadge {
+    min-height: 22px;
+    font-size: 10px;
+  }
+
+  .mobileHorizontalCard .pickupBadge {
+    min-height: 24px;
+    padding: 6px 12px;
+    font-size: 12px;
+    font-weight: 600;
+  }
+
+  .cartButton {
+    width: 36px;
+    height: 36px;
+  }
+
+  .mobileHorizontalCard .cartButton {
+    right: 10px;
+    bottom: 10px;
+    width: 46px;
+    height: 46px;
+  }
+}
