@@ -19,10 +19,8 @@ function App() {
         <Route path="/*" element={<ProductPage />} />
         <Route path="/checkout" element={<CheckoutPage />} />
         <Route path="/checkout/email" element={<CheckoutEmailPage />} />
-        <Route
-          path="/checkout/profile"
-          element={<CheckoutProfilePage />}
-        />
+        <Route path="/checkout/profile" element={<CheckoutProfilePage />} />
+
         <Route path="/admin" element={<AdminPage />} />
         <Route path="/configurar-precos" element={<ConfigurarPrecosPage />} />
         <Route path="/infos-consultaveis" element={<InfosConsultaveisPage />} />

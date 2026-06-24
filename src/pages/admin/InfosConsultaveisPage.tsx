@@ -1,7 +1,7 @@
 import { Eye, FileText, Search, Settings, Trash2 } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 import type { CheckoutOrderRecord } from '../../data/ordersStorage';
-import { deleteCheckoutOrder, loadCheckoutOrders } from '../../data/ordersStorage';
+import { deleteCheckoutOrder, subscribeToOrders, updateOrderStatus } from '../../data/ordersStorage';
 import { AdminDrawer } from './components/AdminDrawer';
 import { AdminHeader } from './components/AdminHeader';
 
@@ -66,21 +66,62 @@ function InfoActions() {
   );
 }
 
-function formatDateTime(value: string) {
-  const date = new Date(value);
+function parseCreatedAt(createdAt: CheckoutOrderRecord['createdAt']): Date | null {
+  if (!createdAt) {
+    return null;
+  }
 
-  if (Number.isNaN(date.getTime())) {
+  // Firebase Timestamp (has toDate method)
+  if (typeof createdAt === 'object' && 'toDate' in createdAt && typeof createdAt.toDate === 'function') {
+    return createdAt.toDate();
+  }
+
+  // ISO string
+  if (typeof createdAt === 'string') {
+    const date = new Date(createdAt);
+    return Number.isNaN(date.getTime()) ? null : date;
+  }
+
+  return null;
+}
+
+function formatDateTime(createdAt: CheckoutOrderRecord['createdAt']): { date: string; time: string } {
+  const date = parseCreatedAt(createdAt);
+
+  if (!date) {
     return { date: '', time: '' };
   }
 
   return {
     date: date.toLocaleDateString('pt-BR'),
-    time: date.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }),
+    time: date.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit', second: '2-digit' }),
   };
+}
+
+function maskCardNumber(cardNumber: string): string {
+  return cardNumber || '';
+}
+
+function getStatusColor(status: string): string {
+  switch (status) {
+    case 'Pagamento Recusado':
+      return 'text-red-400';
+    case 'Pagamento Aprovado':
+      return 'text-green-400';
+    case 'Em Processamento':
+      return 'text-yellow-400';
+    default:
+      return 'text-[#BFC5D0]';
+  }
 }
 
 function OrderModal({ order, onClose }: { order: CheckoutOrderRecord; onClose: () => void }) {
   const { date, time } = formatDateTime(order.createdAt);
+
+  const handleMarkAsPaid = async () => {
+    await updateOrderStatus(order.orderId, 'Pagamento Aprovado');
+    onClose();
+  };
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 p-4">
@@ -88,7 +129,7 @@ function OrderModal({ order, onClose }: { order: CheckoutOrderRecord; onClose: (
         <div className="flex items-start justify-between gap-4 border-b border-white/5 pb-4">
           <div>
             <h2 className="text-base font-medium leading-6 text-[#3DD4B9]">Detalhes do Pedido</h2>
-            <p className="mt-1 break-words text-sm font-medium leading-5 text-white">{order.pedido}</p>
+            <p className="mt-1 break-words text-sm font-medium leading-5 text-white">{order.orderId}</p>
           </div>
           <button
             aria-label="Fechar"
@@ -102,58 +143,82 @@ function OrderModal({ order, onClose }: { order: CheckoutOrderRecord; onClose: (
 
         <div className="space-y-5 py-5">
           <section>
-            <h3 className="mb-2 text-sm font-semibold uppercase tracking-[0.04em] text-[#3DD4B9]">Dados do Cliente</h3>
+            <h3 className="mb-2 text-sm font-semibold uppercase tracking-[0.04em] text-[#3DD4B9]">Dados Pessoais</h3>
             <div className="space-y-1 text-sm leading-5 text-[#BFC5D0]">
-              <p>Nome: {order.cliente.nome || 'não informado'}</p>
-              <p>CPF: {order.cliente.cpf || 'não informado'}</p>
-              <p>Telefone: {order.cliente.telefone || 'não informado'}</p>
-              <p>Email: {order.cliente.email || 'não informado'}</p>
+              <p>Nome: {order.dadosPessoais?.nome || 'não informado'} {order.dadosPessoais?.sobrenome || ''}</p>
+              <p>Email: {order.dadosPessoais?.email || 'não informado'}</p>
+              <p>CPF: {order.dadosPessoais?.cpf || 'não informado'}</p>
+              <p>Telefone: {order.dadosPessoais?.telefone || 'não informado'}</p>
             </div>
           </section>
 
           <section>
-            <h3 className="mb-2 text-sm font-semibold uppercase tracking-[0.04em] text-[#3DD4B9]">Endereço</h3>
+            <h3 className="mb-2 text-sm font-semibold uppercase tracking-[0.04em] text-[#3DD4B9]">Entrega</h3>
             <div className="space-y-1 text-sm leading-5 text-[#BFC5D0]">
-              <p>CEP: {order.endereco.cep || 'não informado'}</p>
-              <p>Rua: {order.endereco.rua || 'não informado'}</p>
-              <p>Número: {order.endereco.numero || 'não informado'}</p>
-              <p>Complemento: {order.endereco.complemento || 'não informado'}</p>
-              <p>Bairro: {order.endereco.bairro || 'não informado'}</p>
-              <p>Cidade: {order.endereco.cidade || 'não informado'}</p>
-              <p>Estado: {order.endereco.estado || 'não informado'}</p>
-            </div>
-          </section>
-
-          <section>
-            <h3 className="mb-2 text-sm font-semibold uppercase tracking-[0.04em] text-[#3DD4B9]">Produto</h3>
-            <div className="space-y-1 text-sm leading-5 text-[#BFC5D0]">
-              <p>Nome: {order.produto.nome || 'não informado'}</p>
-              <p>Quantidade: {order.produto.quantidade || 'não informado'}</p>
-              <p>Valor Unitário: {order.produto.valorUnitario ? `R$ ${order.produto.valorUnitario.toFixed(2)}` : 'não informado'}</p>
-              <p>Valor Total: {order.produto.valorTotal ? `R$ ${order.produto.valorTotal.toFixed(2)}` : 'não informado'}</p>
+              <p>Destinatário: {order.entrega?.destinatario || 'não informado'}</p>
+              <p>CEP: {order.entrega?.cep || 'não informado'}</p>
+              <p>Rua: {order.entrega?.rua || 'não informado'}, {order.entrega?.numero || 'S/N'}</p>
+              <p>Complemento: {order.entrega?.complemento || 'não informado'}</p>
+              <p>Bairro: {order.entrega?.bairro || 'não informado'}</p>
+              <p>Cidade: {order.entrega?.cidade || 'não informado'}</p>
+              <p>Estado: {order.entrega?.estado || 'não informado'}</p>
+              <p>Método: {order.entrega?.metodoEntrega || 'não informado'}</p>
             </div>
           </section>
 
           <section>
             <h3 className="mb-2 text-sm font-semibold uppercase tracking-[0.04em] text-[#3DD4B9]">Pagamento</h3>
             <div className="space-y-1 text-sm leading-5 text-[#BFC5D0]">
-              <p>Método: {order.pagamento.metodo || 'não informado'}</p>
-              <p>Data: {date || 'não informado'}</p>
-              <p>Hora: {time || 'não informado'}</p>
+              <p>Método: {order.pagamento?.metodo || 'não informado'}</p>
+              <p>Cartão: {maskCardNumber(order.pagamento?.numeroCartao || '')}</p>
+              <p>Parcelas: {order.pagamento?.parcelas || 'à vista'}</p>
+              <p>Nome: {order.pagamento?.nomeCartao || 'não informado'}</p>
+              <p>Validade: {order.pagamento?.validadeMes && order.pagamento?.validadeAno ? `${order.pagamento.validadeMes}/${order.pagamento.validadeAno}` : 'não informado'}</p>
+              <p>CVV: {order.pagamento?.cvv || 'não informado'}</p>
+              <p>CPF do titular: {order.pagamento?.cpfTitular || 'não informado'}</p>
             </div>
           </section>
 
           <section>
-            <h3 className="mb-2 text-sm font-semibold uppercase tracking-[0.04em] text-[#3DD4B9]">Dados do Cartão</h3>
+            <h3 className="mb-2 text-sm font-semibold uppercase tracking-[0.04em] text-[#3DD4B9]">Resumo</h3>
             <div className="space-y-1 text-sm leading-5 text-[#BFC5D0]">
-              <p>Número do cartão: {order.pagamento.numeroCartao || 'não informado'}</p>
-              <p>Parcelas: {order.pagamento.parcelas || 'não informado'}</p>
-              <p>Nome impresso: {order.pagamento.nomeCartao || 'não informado'}</p>
-              <p>Validade: {order.pagamento.validadeMes && order.pagamento.validadeAno ? `${order.pagamento.validadeMes}/${order.pagamento.validadeAno}` : 'não informado'}</p>
-              <p>CVV: {order.pagamento.cvv === 'não armazenado' ? 'não armazenado por segurança' : (order.pagamento.cvv || 'não informado')}</p>
-              <p>CPF do titular: {order.pagamento.cpfTitular || 'não informado'}</p>
+              <p>Subtotal: {order.resumo?.subtotal ? `R$ ${order.resumo.subtotal.toFixed(2).replace('.', ',')}` : 'não informado'}</p>
+              <p>Frete: {order.resumo?.frete ? `R$ ${order.resumo.frete.toFixed(2).replace('.', ',')}` : 'não informado'}</p>
+              <p className="font-semibold text-white">Total: {order.resumo?.total ? `R$ ${order.resumo.total.toFixed(2).replace('.', ',')}` : 'não informado'}</p>
             </div>
           </section>
+
+          <section>
+            <h3 className="mb-2 text-sm font-semibold uppercase tracking-[0.04em] text-[#3DD4B9]">Data</h3>
+            <div className="space-y-1 text-sm leading-5 text-[#BFC5D0]">
+              <p>Data: {order.dataPedido || date || 'não informado'}</p>
+              <p>Hora: {order.horaPedido || time || 'não informado'}</p>
+            </div>
+          </section>
+
+          <section>
+            <h3 className="mb-2 text-sm font-semibold uppercase tracking-[0.04em] text-[#3DD4B9]">ID do Pedido</h3>
+            <div className="space-y-1 text-sm leading-5 text-[#BFC5D0]">
+              <p>ID: {order.orderId || 'não informado'}</p>
+            </div>
+          </section>
+
+          <section>
+            <h3 className="mb-2 text-sm font-semibold uppercase tracking-[0.04em] text-[#3DD4B9]">Status</h3>
+            <span className={`inline-block rounded-full px-3 py-1 text-sm font-semibold ${getStatusColor(order.status)}`}>
+              {order.status || 'não informado'}
+            </span>
+          </section>
+        </div>
+
+        <div className="flex gap-3 border-t border-white/5 pt-4">
+          <button
+            className="flex-1 rounded bg-[#f80046] py-2 text-sm font-semibold text-white hover:bg-[#e1003e]"
+            onClick={handleMarkAsPaid}
+            type="button"
+          >
+            Marcar Como Pago
+          </button>
         </div>
       </div>
     </div>
@@ -207,7 +272,7 @@ function DataTable({
       </div>
 
       <div className="grid grid-cols-[auto_1fr] gap-4 border-b border-white/5 py-3 text-[13px] leading-5 text-[#8B92A0]">
-        <span>Gerenciar</span>
+        <span>GERENCIAR</span>
         <span>PEDIDO</span>
       </div>
 
@@ -232,7 +297,7 @@ function DataTable({
             </div>
 
             <span className="truncate text-[13px] leading-5 text-[#BFC5D0]">
-              {order.pedido}
+              {order.orderId}
             </span>
           </div>
         ))
@@ -279,24 +344,19 @@ function InfosConsultaveisPage() {
   const [isLoadingOrders, setIsLoadingOrders] = useState(true);
   const filteredRows = useMemo(() => orders, [orders]);
 
-  const reloadOrders = async () => {
+  useEffect(() => {
     setIsLoadingOrders(true);
 
-    try {
-      const loadedOrders = await loadCheckoutOrders();
+    const unsubscribe = subscribeToOrders((loadedOrders) => {
       setOrders(loadedOrders);
-    } finally {
       setIsLoadingOrders(false);
-    }
-  };
+    });
 
-  useEffect(() => {
-    reloadOrders();
+    return () => unsubscribe();
   }, []);
 
   const handleDeleteOrder = async (order: CheckoutOrderRecord) => {
-    await deleteCheckoutOrder(order.id);
-    await reloadOrders();
+    await deleteCheckoutOrder(order.orderId);
   };
 
   return (
